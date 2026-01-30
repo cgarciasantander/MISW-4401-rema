@@ -24,7 +24,7 @@
 // MQTT Broker Configuration
 // ============================================
 #define MQTT_HOST       "iotlab.virtual.uniandes.edu.co"
-#define MQTT_PORT       8883
+#define MQTT_PORT       8082
 #define MQTT_USER       "your_mqtt_username"
 #define MQTT_PASS       "your_mqtt_password"
 
