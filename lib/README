@@ -1,0 +1,7 @@
+
+This directory is intended for project specific (private) libraries.
+PlatformIO Library Dependency Finder will look into this folder to find
+and compile dependent libraries.
+
+More info at:
+https://docs.platformio.org/page/librarymanager/ldf.html
