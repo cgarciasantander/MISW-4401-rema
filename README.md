@@ -38,6 +38,7 @@ IoT sensor monitoring system that publishes temperature, humidity, and light dat
 rema-iot/
 ├── main/
 │   ├── main.ino              # Main sketch
+│   ├── sketch.yaml           # Arduino CLI profiles (boards & libraries)
 │   ├── config.h              # Your configuration (gitignored)
 │   ├── config.h.example      # Configuration template
 │   ├── HAL.h                 # Hardware abstraction interface
@@ -48,11 +49,35 @@ rema-iot/
 
 ## Setup
 
-### 1. Install Arduino IDE
+### Option A: Arduino CLI (recommended)
+
+Use the included `sketch.yaml` to automatically install boards and libraries:
+
+```bash
+# Install Arduino CLI (macOS)
+brew install arduino-cli
+
+# Configure credentials
+cp main/config.h.example main/config.h
+# Edit main/config.h with your values
+
+# Compile for ESP32
+arduino-cli compile --profile esp32 main/
+
+# Compile for ESP8266
+arduino-cli compile --profile esp8266 main/
+
+# Upload (replace /dev/cu.usbserial-XXX with your port)
+arduino-cli upload -p /dev/cu.usbserial-XXX --profile esp32 main/
+```
+
+### Option B: Arduino IDE
+
+#### 1. Install Arduino IDE
 
 Download and install [Arduino IDE](https://www.arduino.cc/en/software) (version 2.x recommended).
 
-### 2. Install Board Packages
+#### 2. Install Board Packages
 
 1. Open Arduino IDE
 2. Go to **File > Preferences**
@@ -65,7 +90,7 @@ Download and install [Arduino IDE](https://www.arduino.cc/en/software) (version 
    - **esp32** by Espressif Systems
    - **esp8266** by ESP8266 Community
 
-### 3. Install Required Libraries
+#### 3. Install Required Libraries
 
 Go to **Sketch > Include Library > Manage Libraries** and install:
 
@@ -75,7 +100,7 @@ Go to **Sketch > Include Library > Manage Libraries** and install:
 | Adafruit Unified Sensor | Adafruit | 1.1.14+ |
 | PubSubClient | Nick O'Leary | 2.8+ |
 
-### 4. Configure Credentials
+#### 4. Configure Credentials
 
 Copy the template and fill in your credentials:
 
@@ -97,7 +122,7 @@ Edit `main/config.h` with your values:
 
 The `main/config.h` file is gitignored to keep your credentials safe.
 
-### 5. Select Board and Upload
+#### 5. Select Board and Upload
 
 1. Open `main/main.ino` in Arduino IDE
 2. Select your board:
@@ -106,7 +131,7 @@ The `main/config.h` file is gitignored to keep your credentials safe.
 3. Select the correct port: **Tools > Port**
 4. Click **Upload** (arrow button)
 
-### 6. Monitor Serial Output
+#### 6. Monitor Serial Output
 
 Open **Tools > Serial Monitor** and set baud rate to **115200**.
 
