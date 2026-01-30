@@ -1,5 +1,10 @@
-.pio
-.vscode
-
-# Environment variables
+# Environment files
 .env
+
+# Arduino IDE compiled files
+*.ino.bin
+*.ino.elf
+*.ino.hex
+
+# Build directories
+build/

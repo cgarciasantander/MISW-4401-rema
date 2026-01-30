@@ -1,49 +1,44 @@
-#ifndef SECRETS_H
-#define SECRETS_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
-// Enable only one of these below, disabling both is fine too.
+// ============================================
+// SECURITY MODE
+// Enable only ONE of these options
+// ============================================
 #define CHECK_CA_ROOT
 // #define CHECK_PUB_KEY
 // #define CHECK_FINGERPRINT
 
 // ============================================
-// Environment variables (loaded from .env)
-// These can be overridden at build time via:
-//   -D WIFI_SSID=\"your_ssid\"
+// WiFi Configuration
 // ============================================
+#define WIFI_SSID       "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD   "YOUR_WIFI_PASSWORD"
 
-// WiFi credentials
-#ifndef WIFI_SSID
-    #define WIFI_SSID "YOUR_SSID"
-#endif
-#ifndef WIFI_PASSWORD
-    #define WIFI_PASSWORD "YOUR_PASSWORD"
-#endif
+// ============================================
+// Device Configuration
+// ============================================
+#define HOSTNAME        "your_device_hostname"
 
-// Device hostname
-#ifndef HOSTNAME
-    #define HOSTNAME "your_hostname"
-#endif
+// ============================================
+// MQTT Broker Configuration
+// ============================================
+#define MQTT_HOST       "iotlab.virtual.uniandes.edu.co"
+#define MQTT_PORT       8883
+#define MQTT_USER       "your_mqtt_username"
+#define MQTT_PASS       "your_mqtt_password"
 
-// MQTT broker configuration
-#ifndef MQTT_HOST
-    #define MQTT_HOST "your.mqtt.broker.com"
-#endif
-#ifndef MQTT_PORT
-    #define MQTT_PORT 8883
-#endif
-#ifndef MQTT_USER
-    #define MQTT_USER "your_mqtt_user"
-#endif
-#ifndef MQTT_PASS
-    #define MQTT_PASS "your_mqtt_pass"
-#endif
-
-// MQTT topics
+// ============================================
+// MQTT Topics (auto-generated from HOSTNAME)
+// ============================================
 #define MQTT_PUB_TOPIC_HUMIDITY   "humedad/panama/" HOSTNAME
 #define MQTT_PUB_TOPIC_TEMP       "temperatura/panama/" HOSTNAME
 #define MQTT_PUB_TOPIC_LIGHT      "luminosidad/panama/" HOSTNAME
 #define MQTT_SUB_TOPIC            HOSTNAME "/"
+
+// ============================================
+// TLS Certificates
+// ============================================
 
 #ifdef CHECK_CA_ROOT
 static const char digicert[] PROGMEM = R"EOF(
@@ -96,4 +91,4 @@ xxxxxxxx
 static const char fp[] PROGMEM = "AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD";
 #endif
 
-#endif // SECRETS_H
+#endif // CONFIG_H

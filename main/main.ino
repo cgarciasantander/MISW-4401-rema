@@ -1,5 +1,5 @@
 #include "HAL.h"
-#include "secrets.h"
+#include "config.h"
 #include <time.h>
 #include <PubSubClient.h>
 #include <DHT.h>

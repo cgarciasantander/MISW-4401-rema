@@ -12,10 +12,10 @@ IoT sensor monitoring system that publishes temperature, humidity, and light dat
 
 ## Supported Devices
 
-| Device | Environment | Board |
-|--------|-------------|-------|
-| ESP32 DevKit v1 | `esp32dev` | `esp32dev` |
-| ESP8266 NodeMCU v3 | `nodemcuv3` | `nodemcuv2` |
+| Device | Arduino IDE Board |
+|--------|-------------------|
+| ESP32 DevKit v1 | ESP32 Dev Module |
+| ESP8266 NodeMCU v3 | NodeMCU 1.0 (ESP-12E Module) |
 
 ## Hardware Requirements
 
@@ -32,94 +32,83 @@ IoT sensor monitoring system that publishes temperature, humidity, and light dat
 | LDR | GPIO34 | A0 |
 | LED | GPIO2 | GPIO2 |
 
-## Directory Structure
+## Project Structure
 
 ```
 rema-iot/
-├── src/
-│   └── main.cpp              # Application entry point
-├── include/
-│   └── secrets.h             # Credentials config (uses .env values)
-├── lib/
-│   └── HAL/
-│       └── src/
-│           ├── HAL.h             # Hardware abstraction interface
-│           ├── HAL_ESP32.cpp     # ESP32 implementation
-│           └── HAL_ESP8266.cpp   # ESP8266 implementation
-├── .env                      # Your credentials (gitignored)
-├── .env.example              # Template for .env
-├── load_env.py               # Loads .env at build time
-├── platformio.ini            # PlatformIO configuration
+├── main/
+│   ├── main.ino              # Main sketch
+│   ├── config.h              # Your configuration (gitignored)
+│   ├── config.h.example      # Configuration template
+│   ├── HAL.h                 # Hardware abstraction interface
+│   ├── HAL_ESP32.cpp         # ESP32 implementation
+│   └── HAL_ESP8266.cpp       # ESP8266 implementation
 └── README.md
 ```
 
-## Technologies
-
-| Technology | Purpose |
-|------------|---------|
-| [PlatformIO](https://platformio.org/) | Build system and dependency management |
-| [Arduino Framework](https://www.arduino.cc/) | Hardware abstraction for microcontrollers |
-| [PubSubClient](https://github.com/knolleary/pubsubclient) | MQTT client library |
-| [Adafruit DHT](https://github.com/adafruit/DHT-sensor-library) | DHT sensor library |
-| WiFiClientSecure | TLS/SSL connections |
-| BearSSL (ESP8266) | Cryptographic library for ESP8266 |
-
 ## Setup
 
-### 1. Install PlatformIO
+### 1. Install Arduino IDE
 
-Install the [PlatformIO IDE extension](https://platformio.org/install/ide?install=vscode) for VSCode, or install the CLI:
+Download and install [Arduino IDE](https://www.arduino.cc/en/software) (version 2.x recommended).
 
-```bash
-pip install platformio
-```
+### 2. Install Board Packages
 
-### 2. Clone the Repository
+1. Open Arduino IDE
+2. Go to **File > Preferences**
+3. In "Additional Boards Manager URLs", add these URLs (comma-separated):
+   ```
+   https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json,https://arduino.esp8266.com/stable/package_esp8266com_index.json
+   ```
+4. Go to **Tools > Board > Boards Manager**
+5. Search and install:
+   - **esp32** by Espressif Systems
+   - **esp8266** by ESP8266 Community
 
-```bash
-git clone <repository-url>
-cd rema-iot
-```
+### 3. Install Required Libraries
 
-### 3. Configure Credentials
+Go to **Sketch > Include Library > Manage Libraries** and install:
 
-Copy the example environment file and fill in your credentials:
+| Library | Author | Version |
+|---------|--------|---------|
+| DHT sensor library | Adafruit | 1.4.6+ |
+| Adafruit Unified Sensor | Adafruit | 1.1.14+ |
+| PubSubClient | Nick O'Leary | 2.8+ |
 
-```bash
-cp .env.example .env
-```
+### 4. Configure Credentials
 
-Edit `.env` with your values:
-
-```env
-WIFI_SSID=your_wifi_ssid
-WIFI_PASSWORD=your_wifi_password
-HOSTNAME=your_device_hostname
-MQTT_HOST=your.mqtt.broker.com
-MQTT_PORT=8883
-MQTT_USER=your_mqtt_username
-MQTT_PASS=your_mqtt_password
-```
-
-The `.env` file is automatically loaded at build time via `load_env.py` and injected as compiler flags. The `.env` file is gitignored to keep your credentials safe.
-
-### 4. Build and Upload
-
-**For ESP32:**
-```bash
-pio run -e esp32dev -t upload
-```
-
-**For ESP8266:**
-```bash
-pio run -e nodemcuv3 -t upload
-```
-
-### 5. Monitor Serial Output
+Copy the template and fill in your credentials:
 
 ```bash
-pio device monitor
+cp main/config.h.example main/config.h
 ```
+
+Edit `main/config.h` with your values:
+
+```cpp
+#define WIFI_SSID       "your_wifi_ssid"
+#define WIFI_PASSWORD   "your_wifi_password"
+#define HOSTNAME        "your_device_hostname"
+#define MQTT_HOST       "your.mqtt.broker.com"
+#define MQTT_PORT       8883
+#define MQTT_USER       "your_mqtt_username"
+#define MQTT_PASS       "your_mqtt_password"
+```
+
+The `main/config.h` file is gitignored to keep your credentials safe.
+
+### 5. Select Board and Upload
+
+1. Open `main/main.ino` in Arduino IDE
+2. Select your board:
+   - **ESP32:** Tools > Board > ESP32 Arduino > ESP32 Dev Module
+   - **ESP8266:** Tools > Board > ESP8266 Boards > NodeMCU 1.0 (ESP-12E Module)
+3. Select the correct port: **Tools > Port**
+4. Click **Upload** (arrow button)
+
+### 6. Monitor Serial Output
+
+Open **Tools > Serial Monitor** and set baud rate to **115200**.
 
 ## MQTT Topics
 
@@ -146,13 +135,13 @@ The HAL pattern abstracts platform-specific differences, allowing the main appli
 
 ### Adding a New Platform
 
-1. Create `lib/HAL/src/HAL_<PLATFORM>.cpp`
-2. Implement the required constants and functions
-3. Add a new environment in `platformio.ini`
+1. Create `HAL_<PLATFORM>.cpp` in the `main/` folder
+2. Wrap the implementation with `#ifdef <PLATFORM>` / `#endif`
+3. Implement the required constants and functions
 
 ## TLS Security
 
-The project supports three TLS verification methods (configure in `secrets.h`):
+The project supports three TLS verification methods (configure in `main/config.h`):
 
 | Method | Define | Description |
 |--------|--------|-------------|
